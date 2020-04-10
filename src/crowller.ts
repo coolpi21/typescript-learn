@@ -1,9 +1,8 @@
 import fs from 'fs';
 import path from 'path';
 import superagent from 'superagent';
-import DellAnalyzer from './dellAnalyzer';
 
-export default interface Analyzer {
+export interface Analyzer {
   analyze: (result: string, path: string) => string;
 }
 
@@ -30,9 +29,4 @@ class Crowller {
   }
 }
 
-const secret = 'x3b174jsx';
-const url = `http://www.dell-lee.com/typescript/demo.html?secret=${secret}`;
-
-const analyzer = DellAnalyzer.getInstance();
-new Crowller(url, analyzer);
-console.log('Hello world2');
+export default Crowller;

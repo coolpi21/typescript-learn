@@ -1,6 +1,6 @@
 import fs from 'fs';
 import cheerio from 'cheerio';
-import Analyzer from './crowller';
+import { Analyzer } from './crowller';
 
 interface Course {
   title: string;
