@@ -1,11 +1,20 @@
-import { Router, Request, Response } from 'express';
-import Crowller from './crowller';
-import DellAnalyzer from './dellAnalyzer';
 import fs from 'fs';
 import path from 'path';
+import { Router, Request, Response, NextFunction } from 'express';
+import Crowller from './utils/crowller';
+import DellAnalyzer from './utils/dellAnalyzer';
+import { getReponseInfo } from './utils/util';
 
 const router = Router();
 
+const checkLogin = (req: Request, res: Response, next: NextFunction) => {
+  const isLogin = req.session ? req.session.isLogin : false;
+  if (isLogin) {
+    next();
+  } else {
+    res.json(getReponseInfo(null, '请先登入'));
+  }
+};
 interface RequestWithBody extends Request {
   body: {
     [key: string]: string | undefined;
@@ -46,15 +55,16 @@ router.post('/login', (req: Request, res: Response) => {
   const isLogin = req.session ? req.session.isLogin : undefined;
 
   if (isLogin) {
-    res.send('已经登入');
+    res.json(getReponseInfo(null, '请先登入'));
   } else {
     if (req.body.password === '123' && req.session) {
       req.session.isLogin = true;
       // res.send('登入成功')
       // 实现跳转页面
-      res.redirect('/');
+      res.json(getReponseInfo(null));
     } else {
-      res.send('登入失败');
+      // res.send('登入失败');
+      res.json(getReponseInfo(null, '登入失败'));
     }
   }
 });
@@ -64,40 +74,27 @@ router.get('/loginout', (req: RequestWithBody, res: Response) => {
   if (req.session) {
     req.session.isLogin = undefined;
   }
-  res.redirect('/');
+  res.json(getReponseInfo(null));
 });
 
 // 增加验证功能
-router.get('/getData', (req: RequestWithBody, res: Response) => {
-  const isLogin = req.session ? req.session.isLogin : undefined;
-
-  if (isLogin) {
-    const secret = 'x3b174jsx';
-    const url = `http://www.dell-lee.com/typescript/demo.html?secret=${secret}`;
-    const analyzer = DellAnalyzer.getInstance();
-    new Crowller(url, analyzer);
-    res.send('Get Data Success!');
-  } else {
-    res.send('请先登入');
-  }
+router.get('/getData', checkLogin, (req: RequestWithBody, res: Response) => {
+  const secret = 'x3b174jsx';
+  const url = `http://www.dell-lee.com/typescript/demo.html?secret=${secret}`;
+  const analyzer = DellAnalyzer.getInstance();
+  new Crowller(url, analyzer);
+  res.json(getReponseInfo(null));
 });
 
 // 展示数据
-router.get('/showData', (req: RequestWithBody, res: Response) => {
+router.get('/showData', checkLogin, (req: RequestWithBody, res: Response) => {
   // 使用 try catch 捕获异常
-
-  const isLogin = req.session ? req.session.isLogin : undefined;
-
-  if (isLogin) {
-    try {
-      const filePath = path.resolve(__dirname, '../data/course.json');
-      const result = fs.readFileSync(filePath, 'utf8');
-      res.json(JSON.parse(result));
-    } catch (e) {
-      res.send('没有数据');
-    }
-  } else {
-    res.send('请先登入');
+  try {
+    const filePath = path.resolve(__dirname, '../data/course.json');
+    const result = fs.readFileSync(filePath, 'utf8');
+    res.json(getReponseInfo(JSON.parse(result)));
+  } catch (e) {
+    res.json(getReponseInfo(null, '没有数据'));
   }
 });
 
