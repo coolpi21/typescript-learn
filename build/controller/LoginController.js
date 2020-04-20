@@ -11,10 +11,16 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 Object.defineProperty(exports, "__esModule", { value: true });
 require("reflect-metadata");
 var decorator_1 = require("./decorator");
+var util_1 = require("../utils/util");
 var LoginController = /** @class */ (function () {
     function LoginController() {
     }
-    LoginController.prototype.login = function () { };
+    LoginController.prototype.loginout = function (req, res) {
+        if (req.session) {
+            req.session.isLogin = undefined;
+        }
+        res.json(util_1.getReponseInfo(null));
+    };
     LoginController.prototype.home = function (req, res) {
         var isLogin = req.session ? req.session.isLogin : undefined;
         if (isLogin) {
@@ -25,11 +31,11 @@ var LoginController = /** @class */ (function () {
         }
     };
     __decorate([
-        decorator_1.get('/login'),
+        decorator_1.get('/loginout'),
         __metadata("design:type", Function),
-        __metadata("design:paramtypes", []),
+        __metadata("design:paramtypes", [Object, Object]),
         __metadata("design:returntype", void 0)
-    ], LoginController.prototype, "login", null);
+    ], LoginController.prototype, "loginout", null);
     __decorate([
         decorator_1.get('/'),
         __metadata("design:type", Function),

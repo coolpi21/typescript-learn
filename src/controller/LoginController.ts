@@ -1,11 +1,17 @@
 import 'reflect-metadata';
 import { Request, Response } from 'express';
 import { get, controller } from './decorator';
+import { getReponseInfo } from '../utils/util';
 
 @controller
 class LoginController {
-  @get('/login')
-  login() {}
+  @get('/loginout')
+  loginout(req: Request, res: Response) {
+    if (req.session) {
+      req.session.isLogin = undefined;
+    }
+    res.json(getReponseInfo(null));
+  }
   @get('/')
   home(req: Request, res: Response) {
     const isLogin = req.session ? req.session.isLogin : undefined;

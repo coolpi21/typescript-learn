@@ -1,11 +1,11 @@
 import express, { Request, Response, NextFunction } from 'express';
-import router from './router';
+import './controller/LoginController';
+import { router } from './controller/decorator';
 import bodyParser from 'body-parser';
 import cookieSession from 'cookie-session';
+
 const app = express();
-
 app.use(bodyParser.urlencoded({ extended: false }));
-
 app.use(
   cookieSession({
     name: 'session',
