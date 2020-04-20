@@ -1,10 +1,28 @@
 import 'reflect-metadata';
 import { Request, Response } from 'express';
-import { get, controller } from './decorator';
+import { get, controller, post } from './decorator';
 import { getReponseInfo } from '../utils/util';
 
 @controller
 class LoginController {
+  @post('/login')
+  login(req: Request, res: Response) {
+    const isLogin = req.session ? req.session.isLogin : undefined;
+
+    if (isLogin) {
+      res.json(getReponseInfo(null, '请先登入'));
+    } else {
+      if (req.body.password === '123' && req.session) {
+        req.session.isLogin = true;
+        // res.send('登入成功')
+        // 实现跳转页面
+        res.json(getReponseInfo(null));
+      } else {
+        // res.send('登入失败');
+        res.json(getReponseInfo(null, '登入失败'));
+      }
+    }
+  }
   @get('/loginout')
   loginout(req: Request, res: Response) {
     if (req.session) {

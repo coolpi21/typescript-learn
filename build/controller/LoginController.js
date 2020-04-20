@@ -15,6 +15,24 @@ var util_1 = require("../utils/util");
 var LoginController = /** @class */ (function () {
     function LoginController() {
     }
+    LoginController.prototype.login = function (req, res) {
+        var isLogin = req.session ? req.session.isLogin : undefined;
+        if (isLogin) {
+            res.json(util_1.getReponseInfo(null, '请先登入'));
+        }
+        else {
+            if (req.body.password === '123' && req.session) {
+                req.session.isLogin = true;
+                // res.send('登入成功')
+                // 实现跳转页面
+                res.json(util_1.getReponseInfo(null));
+            }
+            else {
+                // res.send('登入失败');
+                res.json(util_1.getReponseInfo(null, '登入失败'));
+            }
+        }
+    };
     LoginController.prototype.loginout = function (req, res) {
         if (req.session) {
             req.session.isLogin = undefined;
@@ -30,6 +48,12 @@ var LoginController = /** @class */ (function () {
             res.send("\n      <html>\n        <body>\n          <form method=\"post\" action=\"/login\">\n            <input type=\"password\" name=\"password\"/>\n            <button>\u767B\u5165</button>\n          </form>\n        </body>\n      </html>\n    ");
         }
     };
+    __decorate([
+        decorator_1.post('/login'),
+        __metadata("design:type", Function),
+        __metadata("design:paramtypes", [Object, Object]),
+        __metadata("design:returntype", void 0)
+    ], LoginController.prototype, "login", null);
     __decorate([
         decorator_1.get('/loginout'),
         __metadata("design:type", Function),
