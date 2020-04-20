@@ -18,9 +18,16 @@ function controller(target) {
         var method = Reflect.getMetadata('method', target.prototype, key);
         // 获取类中的属性方法
         var handler = target.prototype[key];
+        // 获取中间件
+        var middleware = Reflect.getMetadata('middleware', target.prototype, key);
         if (path && method && handler) {
             // 执行路由
-            exports.router[method](path, handler);
+            if (middleware) {
+                exports.router[method](path, middleware, handler);
+            }
+            else {
+                exports.router[method](path, handler);
+            }
         }
     }
 }
@@ -33,5 +40,11 @@ function exceedHttpDecorator(type) {
         };
     };
 }
+function use(middleware) {
+    return function (target, key) {
+        Reflect.defineMetadata('middleware', middleware, target, key);
+    };
+}
+exports.use = use;
 exports.get = exceedHttpDecorator('get');
 exports.post = exceedHttpDecorator('post');

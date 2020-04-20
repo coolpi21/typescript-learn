@@ -1,5 +1,7 @@
 import express, { Request, Response, NextFunction } from 'express';
 import './controller/LoginController';
+import './controller/CrowllerController';
+
 import { router } from './controller/decorator';
 import bodyParser from 'body-parser';
 import cookieSession from 'cookie-session';
