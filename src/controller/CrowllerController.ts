@@ -2,13 +2,13 @@ import fs from 'fs';
 import path from 'path';
 import 'reflect-metadata';
 import { Request, Response, NextFunction } from 'express';
-import { get, controller, use } from './decorator';
+import { get, controller, use } from '../decorator';
 import { getReponseInfo } from '../utils/util';
 import Crowller from '../utils/crowller';
 import DellAnalyzer from '../utils/dellAnalyzer';
 
 const checkLogin = (req: Request, res: Response, next: NextFunction) => {
-  const isLogin = req.session ? req.session.isLogin : false;
+  const isLogin = !!(req.session ? req.session.isLogin : false);
   if (isLogin) {
     next();
   } else {
@@ -22,11 +22,11 @@ interface RequestWithBody extends Request {
   };
 }
 
-@controller
-class LoginController {
+@controller('/')
+export class CrowllerController {
   @get('/showData')
   @use(checkLogin)
-  showData(req: RequestWithBody, res: Response) {
+  showData(req: RequestWithBody, res: Response): void {
     try {
       const filePath = path.resolve(__dirname, '../../data/course.json');
       const result = fs.readFileSync(filePath, 'utf8');
@@ -38,7 +38,7 @@ class LoginController {
 
   @get('/getData')
   @use(checkLogin)
-  getData(req: RequestWithBody, res: Response) {
+  getData(req: RequestWithBody, res: Response): void {
     const secret = 'x3b174jsx';
     const url = `http://www.dell-lee.com/typescript/demo.html?secret=${secret}`;
     const analyzer = DellAnalyzer.getInstance();

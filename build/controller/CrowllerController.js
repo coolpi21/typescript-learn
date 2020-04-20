@@ -15,12 +15,12 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var fs_1 = __importDefault(require("fs"));
 var path_1 = __importDefault(require("path"));
 require("reflect-metadata");
-var decorator_1 = require("./decorator");
+var decorator_1 = require("../decorator");
 var util_1 = require("../utils/util");
 var crowller_1 = __importDefault(require("../utils/crowller"));
 var dellAnalyzer_1 = __importDefault(require("../utils/dellAnalyzer"));
 var checkLogin = function (req, res, next) {
-    var isLogin = req.session ? req.session.isLogin : false;
+    var isLogin = !!(req.session ? req.session.isLogin : false);
     if (isLogin) {
         next();
     }
@@ -28,10 +28,10 @@ var checkLogin = function (req, res, next) {
         res.json(util_1.getReponseInfo(null, '请先登入'));
     }
 };
-var LoginController = /** @class */ (function () {
-    function LoginController() {
+var CrowllerController = /** @class */ (function () {
+    function CrowllerController() {
     }
-    LoginController.prototype.showData = function (req, res) {
+    CrowllerController.prototype.showData = function (req, res) {
         try {
             var filePath = path_1.default.resolve(__dirname, '../../data/course.json');
             var result = fs_1.default.readFileSync(filePath, 'utf8');
@@ -41,7 +41,7 @@ var LoginController = /** @class */ (function () {
             res.json(util_1.getReponseInfo(null, '没有数据'));
         }
     };
-    LoginController.prototype.getData = function (req, res) {
+    CrowllerController.prototype.getData = function (req, res) {
         var secret = 'x3b174jsx';
         var url = "http://www.dell-lee.com/typescript/demo.html?secret=" + secret;
         var analyzer = dellAnalyzer_1.default.getInstance();
@@ -54,16 +54,17 @@ var LoginController = /** @class */ (function () {
         __metadata("design:type", Function),
         __metadata("design:paramtypes", [Object, Object]),
         __metadata("design:returntype", void 0)
-    ], LoginController.prototype, "showData", null);
+    ], CrowllerController.prototype, "showData", null);
     __decorate([
         decorator_1.get('/getData'),
         decorator_1.use(checkLogin),
         __metadata("design:type", Function),
         __metadata("design:paramtypes", [Object, Object]),
         __metadata("design:returntype", void 0)
-    ], LoginController.prototype, "getData", null);
-    LoginController = __decorate([
-        decorator_1.controller
-    ], LoginController);
-    return LoginController;
+    ], CrowllerController.prototype, "getData", null);
+    CrowllerController = __decorate([
+        decorator_1.controller('/')
+    ], CrowllerController);
+    return CrowllerController;
 }());
+exports.CrowllerController = CrowllerController;
