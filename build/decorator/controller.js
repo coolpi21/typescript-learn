@@ -1,4 +1,11 @@
 "use strict";
+var __spreadArrays = (this && this.__spreadArrays) || function () {
+    for (var s = 0, i = 0, il = arguments.length; i < il; i++) s += arguments[i].length;
+    for (var r = Array(s), k = 0, i = 0; i < il; i++)
+        for (var a = arguments[i], j = 0, jl = a.length; j < jl; j++, k++)
+            r[k] = a[j];
+    return r;
+};
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
@@ -14,12 +21,12 @@ function controller(root) {
             // 获取类中的属性方法
             var handler = target.prototype[key];
             // 获取中间件
-            var middleware = Reflect.getMetadata('middleware', target.prototype, key);
+            var middlewares = Reflect.getMetadata('middlewares', target.prototype, key);
             if (path && method) {
                 var fullPATH = root !== '/' ? "" + root + path : path;
                 // 执行路由
-                if (middleware) {
-                    router_1.default[method](fullPATH, middleware, handler);
+                if (middlewares && middlewares.length) {
+                    router_1.default[method].apply(router_1.default, __spreadArrays([fullPATH], middlewares, [handler]));
                 }
                 else {
                     router_1.default[method](fullPATH, handler);

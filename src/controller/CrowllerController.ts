@@ -8,12 +8,18 @@ import Crowller from '../utils/crowller';
 import DellAnalyzer from '../utils/dellAnalyzer';
 
 const checkLogin = (req: Request, res: Response, next: NextFunction) => {
+  console.log('checkLogin middleware');
   const isLogin = !!(req.session ? req.session.isLogin : false);
   if (isLogin) {
     next();
   } else {
     res.json(getReponseInfo(null, '请先登入'));
   }
+};
+
+const test = (req: Request, res: Response, next: NextFunction) => {
+  console.log('test middleware');
+  next();
 };
 
 interface RequestWithBody extends Request {
@@ -38,6 +44,7 @@ export class CrowllerController {
 
   @get('/getData')
   @use(checkLogin)
+  @use(test)
   getData(req: RequestWithBody, res: Response): void {
     const secret = 'x3b174jsx';
     const url = `http://www.dell-lee.com/typescript/demo.html?secret=${secret}`;

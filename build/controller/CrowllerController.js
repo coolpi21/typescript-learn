@@ -20,6 +20,7 @@ var util_1 = require("../utils/util");
 var crowller_1 = __importDefault(require("../utils/crowller"));
 var dellAnalyzer_1 = __importDefault(require("../utils/dellAnalyzer"));
 var checkLogin = function (req, res, next) {
+    console.log('checkLogin middleware');
     var isLogin = !!(req.session ? req.session.isLogin : false);
     if (isLogin) {
         next();
@@ -27,6 +28,10 @@ var checkLogin = function (req, res, next) {
     else {
         res.json(util_1.getReponseInfo(null, '请先登入'));
     }
+};
+var test = function (req, res, next) {
+    console.log('test middleware');
+    next();
 };
 var CrowllerController = /** @class */ (function () {
     function CrowllerController() {
@@ -58,6 +63,7 @@ var CrowllerController = /** @class */ (function () {
     __decorate([
         decorator_1.get('/getData'),
         decorator_1.use(checkLogin),
+        decorator_1.use(test),
         __metadata("design:type", Function),
         __metadata("design:paramtypes", [Object, Object]),
         __metadata("design:returntype", void 0)

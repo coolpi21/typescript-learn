@@ -3,6 +3,10 @@ import { CrowllerController, LoginController } from '../controller';
 
 export function use(middleware: RequestHandler) {
   return function (target: CrowllerController | LoginController, key: string) {
-    Reflect.defineMetadata('middleware', middleware, target, key);
+    // 添加多个中间件
+    const originMiddlewares =
+      Reflect.getMetadata('middlewares', target, key) || [];
+    originMiddlewares.push(middleware);
+    Reflect.defineMetadata('middlewares', originMiddlewares, target, key);
   };
 }
